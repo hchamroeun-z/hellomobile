@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
+import 'package:helloworld/basic_module/color_notifier_provider.dart';
 import 'package:helloworld/basic_module/foodscreen.dart';
 import 'package:helloworld/basic_module/mainscreen.dart';
 import 'package:helloworld/basic_module/mealdetail_screen.dart';
@@ -9,6 +10,16 @@ import 'package:helloworld/basic_module/navscreen.dart';
 import 'theme_notifier_provider.dart';
 import 'myhome.dart';
 
+final colorList=[
+  Colors.blue,
+  Colors.indigo,
+  Colors.teal,
+  Colors.cyan,
+  Colors.amber,
+  Colors.orangeAccent,
+  Colors.deepOrange,
+  Colors.red,
+];
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -18,8 +29,10 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     bool dark=ref.watch(themeNotifierProvider);
+    int index=ref.watch(colorNotifierProvider);
     
-    final seedColor=Colors.pink;
+    final seedColor=colorList[index];
+
     return MaterialApp(
       themeMode: dark ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
@@ -28,7 +41,8 @@ class MyApp extends ConsumerWidget {
         ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lime,brightness: Brightness.dark)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue,
+        brightness: Brightness.dark)),
       debugShowCheckedModeBanner: false,
       // home: Foodscreen(),
       onGenerateRoute: (settings) {

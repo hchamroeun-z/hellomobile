@@ -1,7 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:helloworld/basic_module/color_notifier_provider.dart';
+import 'package:helloworld/basic_module/grid_notifier_provider.dart';
+import 'package:helloworld/basic_module/myapp.dart';
 import 'theme_notifier_provider.dart';
 
+final gridStyles=[
+  Icons.list,
+  Icons.grid_view,
+  Icons.grid_3x3,
+  Icons.grid_4x4,
+];
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -24,7 +33,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         // backgroundColor: _dark ? Colors.black : Colors.white,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: ListView(padding: .all(8), children: [_buildDarkSwitch()]),
+      body: ListView(padding: .all(8), children: [
+        _buildDarkSwitch(),
+        _buildColorGridView(),
+        _buildGridStyle(),
+        ]),
     );
   }
 
@@ -44,5 +57,63 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildColorGridView(){
+    int colorIndex=ref.watch(colorNotifierProvider);
+
+    return Card(
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: colorList.length,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 50), 
+        itemBuilder: (context,index){
+          final clr=colorList[index];
+          return IconButton(onPressed: (){
+            ref.read(colorNotifierProvider.notifier).changeColorIndex(index);
+          },
+          icon: ClipOval(
+            child: Container(color: clr,
+            alignment: .center,
+            child: colorIndex==index?_buildWhiteOval():SizedBox(),
+            )));
+        }),
+    );
+  }
+
+  Widget _buildWhiteOval(){
+    return ClipOval(
+      child: Container(
+        alignment: .center,
+        width: 20,
+        height: 20,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildGridStyle(){
+    int gridIndex=ref.watch(gridNotifierProvider);
+    
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: gridStyles.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4), 
+      itemBuilder: (context,index){
+        final icon=gridStyles[index];
+        return Card(
+          color: gridIndex==index
+            ?Theme.of(context).colorScheme.tertiaryContainer
+            :null,
+          shape: CircleBorder(),
+          child: IconButton(onPressed: ()
+          {
+            ref.read(gridNotifierProvider.notifier).changeGrid(index);
+          }, 
+          icon: Icon(icon)),
+        );
+    });
   }
 }

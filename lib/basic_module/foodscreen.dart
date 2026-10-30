@@ -1,20 +1,22 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helloworld/basic_module/fooddata.dart';
+import 'package:helloworld/basic_module/grid_notifier_provider.dart';
 import 'package:helloworld/basic_module/mealdata.dart';
 import 'fooddata.dart';
 
-class Foodscreen extends StatefulWidget {
-const Foodscreen({super.key});
+class Foodscreen extends ConsumerStatefulWidget {
+// const Foodscreen({super.key});
 
   @override
-  State<Foodscreen> createState() => _FoodscreenState();
+  ConsumerState<Foodscreen> createState() => _FoodscreenState();
 }
 
-class _FoodscreenState extends State<Foodscreen> {
+class _FoodscreenState extends ConsumerState<Foodscreen> {
 @override
   Widget build(BuildContext context) {
     final platform=Theme.of(context).platform;
@@ -33,16 +35,18 @@ class _FoodscreenState extends State<Foodscreen> {
     return FloatingActionButton(onPressed: (){},child: Icon(Icons.add));
   }
 
-  bool _gridStyle=true;
+  // bool _gridStyle=true;
 
   AppBar _buildAppBar(){
     return AppBar(
       title: Text("Foods"),
-      actions: [IconButton(onPressed: (){
-        setState((){
-          _gridStyle= !_gridStyle;
-        });
-      }, icon: Icon(_gridStyle ? Icons.list :Icons.grid_view))],
+      foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      // actions: [IconButton(onPressed: (){
+      //   setState((){
+      //     _gridStyle= !_gridStyle;
+      //   });
+      // }, icon: Icon(_gridStyle ? Icons.list :Icons.grid_view))],
     );
   }
 
@@ -52,8 +56,8 @@ class _FoodscreenState extends State<Foodscreen> {
       children: [
       _buildStoryListView(),
       _buildFoodGridView(),
-      _buildStoryListView(),
-      _buildFoodGridView(),
+      // _buildStoryListView(),
+      // _buildFoodGridView(),
       ],
     );
   }
@@ -123,13 +127,16 @@ class _FoodscreenState extends State<Foodscreen> {
  
 
   Widget _buildFoodGridView() {
+    int gridIndex=ref.watch(gridNotifierProvider);
+    int gridCount=gridIndex+1;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemCount: khmerMealList.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        childAspectRatio: _gridStyle ? 3/4 :3/3,
-        crossAxisCount: _gridStyle ? 2 : 1,
+        childAspectRatio: gridCount == 1 ? 3/3 :3/5,
+        crossAxisCount: gridCount,
       ),
       itemBuilder: (context, index) {
         final item=khmerMealList[index];
